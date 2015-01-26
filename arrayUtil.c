@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include "arrayUtil.h"
 
-	
 
 int isDivisible(void *a, void *hint){
 	return (float)(*(int*)a % *(int*)hint) == 0;
@@ -46,14 +45,9 @@ int stringCompare(void *item, void* hint){
 
 
 int areEqual(ArrayUtil au1, ArrayUtil au2){
-	int i;
-	char *a1 = (char*)au1.base,  *a2 = (char*)au2.base;
-	if (au1.length != au2.length || au1.typeSize != au2.typeSize) return 0;
-
-	for(i=0; i<au1.length*au1.typeSize; i++)
-		if(a1[i] != a2[i]) return 0;
-	return 1;
-	// result = memcmp(a1, a2, a1.length);
+	if (au1.length != au2.length || au1.typeSize != au2.typeSize)
+		return 0;
+	return (memcmp(au1.base, au2.base, au1.length*au1.typeSize)==0) ? 1 : 0;
 }
 
 ArrayUtil create(int typeSize, int length){
@@ -107,7 +101,6 @@ void *findLast(ArrayUtil util, int_void_void match, void *hint){
 	char *base = (char*)util.base;
 	char *item = (char*)malloc(util.typeSize);
 	for(i=util.length-1; i>=0; i--){
-
 		for(j=util.typeSize-1; j>=0; j--){
 			item[j] = base[i * util.typeSize + j];
 		}

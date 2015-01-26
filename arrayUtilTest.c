@@ -823,62 +823,13 @@ void test_filter_will_return_the_array_string_contain_hello(){
 }
 
 
-
-
-
-
-
 ArrayUtil utils[3];
-#define YES 1
-#define NO 0
 typedef char char256[256];
 typedef int int10[10];
 typedef float float5[5];
 Student array_Students[1] = {{"", 0, 0.0}};
 ArrayUtil util_a_b_c = {(char []){'a','b','c'}, sizeof(char), 3};
 Student array_3_Students[3]={{"Abu", 2, 88.5},{"Babu", 2, 98.25},{"Cbabu", 2, 68.0}};
-ArrayUtil util_2_3_5 = {(int []){2,3,5}, sizeof(int), 3};
-ArrayUtil util__2_5__3_75__4_25 = {(float []){2.5,3.75,4.25}, sizeof(float), 3};
-ArrayUtil utilDbl__2_3__3_12__4_6 = {(double []){2.3,3.12,4.6}, sizeof(double), 3};
-ArrayUtil util_Chstar__How_are_youu = {(char* []){"How","are","youu"}, sizeof(char*), 3};
-ArrayUtil util_int10__0to9__1to0 = {
-	(int10 []){{0,1,2,3,4,5,6,7,8,9},{1,2,3,4,5,6,7,8,9,0}},
-	sizeof(int10),
-	2
-};
-
-void test_findIndex_001_returns_minus_1_when_the_element_does_not_exist_in_the_util(){
-	int u1[3]={2,3,5}, index, element=4;
-	utils[0]=(ArrayUtil){u1, sizeof(int), 3};
-	index=findIndex(utils[0], &element);
-	assert(index==-1);
-}
-void test_findIndex_002_returns_0_when_the_1st_element_in_the_util_is_given(){
-	int u1[3]={2,3,5}, index, element=2;
-	utils[0]=(ArrayUtil){u1, sizeof(int), 3};
-	index=findIndex(utils[0], &element);
-	assert(index==0);
-}
-void test_findIndex_003_returns_1_when_the_2nd_element_in_the_util_is_given(){
-	int u1[3]={2,3,5}, index, element=3;
-	utils[0]=(ArrayUtil){u1, sizeof(int), 3};
-	index=findIndex(utils[0], &element);
-	assert(index==1);
-}
-void test_findIndex_004_returns_2_when_the_3rd_element_in_the_util_is_given(){
-	int u1[3]={2,3,5}, index, element=5;
-	utils[0]=(ArrayUtil){u1, sizeof(int), 3};
-	index=findIndex(utils[0], &element);
-	assert(index==2);
-}
-void test_findIndex_005_returns_3_when_the_4th_element_in_the_util_is_given_for_String(){
-	String u1[4]={"Hi","How","are","you?"}, element="you?";
-	int index;
-	utils[0]=(ArrayUtil){(void *)u1, sizeof(String), 4};
-	index=findIndex(utils[0], &element);
-	assert(index==3);
-}
-
 
 void test_findIndex_001_returns_minus_1_for_the_element_does_not_exist_char(){
 	char element='e';
@@ -892,6 +843,7 @@ void test_findIndex_003_returns_2_for_the_3rd_element_char(){
 	char element='c';
 	assert(findIndex(util_a_b_c, &element)==2);
 }
+ArrayUtil util_2_3_5 = {(int []){2,3,5}, sizeof(int), 3};
 void test_findIndex_004_returns_minus_1_for_the_element_does_not_exist_int(){
 	int element=11;
 	assert(findIndex(util_2_3_5, &element)==-1);
@@ -904,6 +856,7 @@ void test_findIndex_006_returns_2_for_the_3rd_element_int(){
 	int element=5;
 	assert(findIndex(util_2_3_5, &element)==2);
 }
+ArrayUtil util__2_5__3_75__4_25 = {(float []){2.5,3.75,4.25}, sizeof(float), 3};
 void test_findIndex_007_returns_minus_1_for_the_element_does_not_exist_float(){
 	float element=2.525;
 	assert(findIndex(util__2_5__3_75__4_25, &element)==-1);
@@ -916,6 +869,7 @@ void test_findIndex_009_returns_2_for_the_3rd_element_float(){
 	float element=4.25;
 	assert(findIndex(util__2_5__3_75__4_25, &element)==2);
 }
+ArrayUtil utilDbl__2_3__3_12__4_6 = {(double []){2.3,3.12,4.6}, sizeof(double), 3};
 void test_findIndex_010_returns_minus_1_for_the_element_does_not_exist_double(){
 	double element=2.2;
 	assert(findIndex(utilDbl__2_3__3_12__4_6, &element)==-1);
@@ -941,6 +895,7 @@ void test_findIndex_015_returns_2_for_the_3rd_element_char256(){
 	char256 element="youu";
 	assert(findIndex(util256__How_are_youu, &element)==2);
 }
+ArrayUtil util_Chstar__How_are_youu = {(char* []){"How","are","youu"}, sizeof(char*), 3};
 void test_findIndex_016_returns_minus_1_for_the_element_does_not_exist_char_star(){
 	char* element="you";
 	assert(findIndex(util_Chstar__How_are_youu, &element)==-1);
@@ -953,6 +908,11 @@ void test_findIndex_018_returns_2_for_the_3rd_element_char_star(){
 	char* element="youu";
 	assert(findIndex(util_Chstar__How_are_youu, &element)==2);
 }
+ArrayUtil util_int10__0to9__1to0 = {
+	(int10 []){{0,1,2,3,4,5,6,7,8,9},{1,2,3,4,5,6,7,8,9,0}},
+	sizeof(int10),
+	2
+};
 void test_findIndex_019_returns_minus_1_for_the_element_does_not_exist_int10(){
 	int10 element={0,1,2,3,4,5,7,6,8,9};
 	assert(findIndex(util_int10__0to9__1to0, &element)==-1);
