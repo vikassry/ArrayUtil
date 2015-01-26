@@ -154,6 +154,47 @@ void test_create_Structures_with_all_fields_NULL(){
     dispose(arr1);
 };
 
+void test_create_005(){
+	log("returns an ArrayUtil with bytes initialized to ZERO for char[256]");
+	String array_empty_strings[2] = {"", ""};
+	ArrayUtil util1 = {array_empty_strings, sizeOf_String, 2};
+	ArrayUtil util2 = create(sizeOf_String, 2);
+	assertEqual(areEqual(util1, util2), YES);
+	dispose(util2);
+}
+void test_create_008(){
+	Student array_Students[1] = {{"", 0, 0.0}};
+	log("returns an ArrayUtil with bytes initialized to ZERO for struct");
+	ArrayUtil util1 = {array_Students, sizeOf_Student, 1};
+	ArrayUtil util2 = create(sizeOf_Student, 1);
+	assertEqual(areEqual(util1, util2), YES);
+	dispose(util2);
+}
+void test_create_009(){
+	log("returns an ArrayUtil with bytes initialized to ZERO for void *");
+	void_star array_void_stars[1] = {0x0};
+	ArrayUtil util1 = {array_void_stars, sizeOf_void_star, 1};
+	ArrayUtil util2 = create(sizeOf_void_star, 1);
+	assertEqual(areEqual(util1, util2), YES);
+	dispose(util2);
+}
+void test_create_010(){
+	log("returns an ArrayUtil with bytes initialized to ZERO for char *");
+	char_star array_char_stars[1] = {(char *)('\0')};
+	ArrayUtil util1 = {array_char_stars, sizeOf_char_star, 1};
+	ArrayUtil util2 = create(sizeOf_char_star, 1);
+	assertEqual(areEqual(util1, util2), YES);
+	dispose(util2);
+}
+void test_create_011(){
+	log("returns an ArrayUtil with bytes initialized to ZERO for int *");
+	int_star array_int_stars[1] = {(int *)(0)};
+	ArrayUtil util1 = {array_int_stars, sizeOf_int_star, 1};
+	ArrayUtil util2 = create(sizeOf_int_star, 1);
+	assertEqual(areEqual(util1, util2), YES);
+	dispose(util2);
+}
+
 void test_ArrayUtil_resizes_the_char_array_and_return_the_modified_array_upto_given_length_when_size_is_less_or_same(){
 	arr1 = (ArrayUtil){(char[]){'a','b','c','d','e','\0'}, sizeof(char), 6};
 	arr2 = resize(arr1,3);  
@@ -417,7 +458,7 @@ void test_findFirst_returns_the_char_of_the_char_array_that_is_capital(){
 void test_findFirst_returns_0_when_element_in_the_char_array_that_is_not_capital(){
     char array1[] = {'k','m','k','l'};
     ArrayUtil util1 = {array1,sizeof(char),3};
-    assertEqual((char)(findFirst(util1,&isCapital,0)), 0);
+    assertEqual((int)(findFirst(util1,&isCapital,0)), 0);
 }
 
 void test_findFirst_returns_the_char_of_the_char256_array_that_is_capital(){
@@ -429,7 +470,7 @@ void test_findFirst_returns_the_char_of_the_char256_array_that_is_capital(){
 void test_findFirst_returns_0_when_element_in_the_char256_array_that_is_not_capital(){
     char array1[256] = {'k','m','k','l'};
     ArrayUtil util1 = {array1,sizeof(char),3};
-    assertEqual((char)(findFirst(util1,&isCapital,0)), 0);
+    assertEqual((int)(findFirst(util1,&isCapital,0)), 0);
 }
 
 
@@ -620,37 +661,341 @@ void test_count_gives_0_when_no_matching_element_is_found_from_double_array(){
 // }
 
 
-ArrayUtil utils[3];
-void test_create_005(){
-	log("returns an ArrayUtil with bytes initialized to ZERO for char[256]");
-	String array_empty_strings[2] = {"", ""};
-	ArrayUtil util1 = {array_empty_strings, sizeOf_String, 2};
-	ArrayUtil util2 = create(sizeOf_String, 2);
-	assertEqual(areEqual(util1, util2), YES);
-	dispose(util2);
+void test_filter_gives_filters_2_and_4_for_1_2_3_4_5_and_number_of_filtered_elements(){
+	int *numbers,i,count,hint = 2,*Result;
+	void* list;
+	list = malloc(sizeof(int)*2);
+	count = filter((ArrayUtil){(int[]){1,2,3,4,5}, sizeof(int),5}, isDivisible,&hint,&list,2);
+	Result = (int*)list;
+	assertEqual(count,2);
+	assertEqual(Result[0],2);
+	assertEqual(Result[1],4);
+	free(list); 
 }
 
-void test_create_009(){
-	log("returns an ArrayUtil with bytes initialized to ZERO for void *");
-	void_star array_void_stars[1] = {0x0};
-	ArrayUtil util1 = {array_void_stars, sizeOf_void_star, 1};
-	ArrayUtil util2 = create(sizeOf_void_star, 1);
-	assertEqual(areEqual(util1, util2), YES);
-	dispose(util2);
+int isEqu(void *item, void *hint){
+	return (*(int*)item == *(int*)hint);
 }
-void test_create_010(){
-	log("returns an ArrayUtil with bytes initialized to ZERO for char *");
-	char_star array_char_stars[1] = {(char *)('\0')};
-	ArrayUtil util1 = {array_char_stars, sizeOf_char_star, 1};
-	ArrayUtil util2 = create(sizeOf_char_star, 1);
-	assertEqual(areEqual(util1, util2), YES);
-	dispose(util2);
+void test_filter_will_return_the_array_of_only_two_8(){
+	int a[]={1,8,8,7,8,9,8}, hint=8, length;
+	void* result = malloc(sizeof(int)*5);
+	length = filter((ArrayUtil){a,sizeof(int),7}, isEqu, &hint, &result, 2);
+
+	assertEqual(length,2);
+	assertEqual(((int*)result)[0],8);
+	assertEqual(((int*)result)[1],8);
+	free(result);
+};
+
+void test_filter_returns_0_when_there_are_no_enven_no_in_existing_array(){
+	int array[]={1,3,5,7};
+	ArrayUtil util={array,INT_SIZE,4};
+	int *filtered=(int *)malloc(INT_SIZE*2);
+	int counter=filter(util,isEven,0,(void**)&filtered,2);
+ 	assertEqual(counter,0);
+ 	free(filtered);
 }
-void test_create_011(){
-	log("returns an ArrayUtil with bytes initialized to ZERO for int *");
-	int_star array_int_stars[1] = {(int *)(0)};
-	ArrayUtil util1 = {array_int_stars, sizeOf_int_star, 1};
-	ArrayUtil util2 = create(sizeOf_int_star, 1);
-	assertEqual(areEqual(util1, util2), YES);
-	dispose(util2);
+
+void test_filter_gives_D_E_for_a_b_c_D_E_in_char_array() {
+	ArrayUtil a = {(char[]){'a','b','c','D','E'},sizeof(char),5};
+	char hint = 'a', *Result;
+	void* list = malloc(sizeof(char)*2);
+	int count =  filter(a,isCapital,&hint,&list,2);
+	Result = (char*)list;
+	assert(count==2);
+	assertEqual(Result[0],'D');
+	assertEqual(Result[1],'E');
+	free(list); 
+}
+
+void test_filter_will_return_the_array_a_a_when_maxItem_is_given_2_for_char_array(){
+	int length, hint=3, max=2;
+	void *result = malloc(sizeof(char)*max);
+	arr1 = (ArrayUtil){(char[]){'a','a','a','b','d'}, sizeof(char), 5};
+	length = filter(arr1, compare, &hint, &result, max);
+	assertEqual(((char*)result)[1],'a');
+	assertEqual(length,2);
+	free(result);
+};
+
+void test_filter_will_return_the_0_when_no_matching_is_found_in_char_array(){
+	int length, hint=3, max=5;
+	void *result = malloc(sizeof(char)*5);
+	arr1 = (ArrayUtil){(char[5]){'d','e','r','b','d'}, sizeof(char), 5};
+	length = filter(arr1,compare,&hint,&result,2);
+	assertEqual(length,0);
+	free(result);
+};
+
+void test_filter_will_return_the_array_of_elements_8_point_4_in_double_array(){
+	double a[]={8.4,8.4,3.9}, hint=8.4;
+	void* result = malloc(sizeof(double)*2);
+	int length = filter((ArrayUtil){ a, sizeof(double), 3}, isEqual, &hint, &result, 2);
+
+	assertEqual(length,2);
+	assertEqual(((double*)result)[0],(double)8.4);
+	free(result);
+};
+
+void test_filter_will_return_the_array_of_only_one_element_8_point_4_in_double_array(){
+	double a[]={8.4,8.4,3.9}, hint=8.4;
+	void* result = malloc(sizeof(double)*2);
+	int length = filter((ArrayUtil){ a, sizeof(double), 3}, isEqual, &hint, &result, 1);
+
+	assertEqual(length,1);
+	assertEqual(((double*)result)[0],(double)8.4);
+	free(result);
+};
+
+void test_filter_will_return_0_if_matching_element_is_not_present_double_array(){
+	double a[]={8.4,8.4,3.9}, hint=8.4;
+	void* result = malloc(sizeof(double)*2);
+	int length = filter((ArrayUtil){ a, sizeof(double), 3}, isEqual, &hint, &result, 1);
+
+	assertEqual(length,1);
+	assertEqual(((double*)result)[0],(double)8.4);
+	free(result);
+};
+
+void test_filter_filters_the_util_floatArray_which_matches_the_criteria (){
+	float hint = 5.1;
+	float *destination = malloc(float_size*2);
+	int_void_void predicate = &isGreaterThan;
+	arr1 = (ArrayUtil){(float[]){7.1,2.4,1.6,3.7,8.3,0.1},float_size,6};
+	
+	assertEqual(filter(arr1, predicate, &hint, (void*)&destination, 4),2);
+	assertEqual(destination[0], (float)7.1);
+	assertEqual(destination[1], (float)8.3);
+}
+
+void test_filter_returns_only_first_3_items_of_floatArray_which_matches_the_criteria(){
+	float hint = 5.1;
+	float *destination = malloc(float_size*3);
+	int_void_void predicate = &isLessThanTheHints;
+	arr1 = (ArrayUtil){(float[]){2.1,2.4,1.6,3.7,5.0,0.1},float_size,6};
+	
+	assertEqual(filter(arr1, predicate, &hint, (void*)&destination, 3),3);
+	assertEqual(destination[0], (float)2.1);
+	assertEqual(destination[1], (float)2.4);
+	assertEqual(destination[2], (float)1.6);
+}
+
+void test_filter_returns_0_if_no_element_matches_the_criteria_in_floatArray(){
+	float hint = 5.1;
+	float *destination = malloc(float_size*3);
+	int_void_void predicate = &isLessThanTheHints;
+	arr1 = (ArrayUtil){(float[]){6.1,12.4,11.6,9.71,51.0,10.1},float_size,6};
+	
+	assertEqual(filter(arr1, predicate, &hint, (void*)&destination, 3), 0);
+	assertEqual(destination[0], (float)0);
+}
+
+void test_filter_will_return_the_array_string_containing_hello(){
+	int length; string hint="hello";
+	void* result = malloc(sizeOf_String*2);
+	int_void_void predicate = &stringCompare;
+	arr1 = (ArrayUtil){(string[]){"hello","gello","hello"},sizeof(string),3};
+	length = filter(arr1, stringCompare,&hint,&result,2);
+	
+	assertEqual(length,2);
+	assertEqual(strcmp(((string*)result)[0], "hello"),0);
+	assertEqual(strcmp(((string*)result)[1], "hello"),0);
+}
+
+void test_filter_will_return_the_array_of_only_one_matching_string_containing_hello(){
+	int length; string hint="hello";
+	void* result = malloc(sizeOf_String*2);
+	int_void_void predicate = &stringCompare;
+	arr1 = (ArrayUtil){(string[]){"hello","gello","hello"},sizeof(string),3};
+	length = filter(arr1, stringCompare,&hint,&result,1);
+	
+	assertEqual(length,1);
+	assertEqual(strcmp(((string*)result)[0], "hello"),0);
+}
+
+void test_filter_will_return_the_array_string_contain_hello(){
+	int length; string hint="hello";
+	void* result;
+	int_void_void predicate = &stringCompare;
+	arr1 = (ArrayUtil){(string[]){"trello","gello"},sizeof(string),2};
+	
+	assert(filter(arr1, stringCompare,&hint,&result,2) == 0);
+}
+
+
+
+
+
+
+
+ArrayUtil utils[3];
+#define YES 1
+#define NO 0
+typedef char char256[256];
+typedef int int10[10];
+typedef float float5[5];
+Student array_Students[1] = {{"", 0, 0.0}};
+ArrayUtil util_a_b_c = {(char []){'a','b','c'}, sizeof(char), 3};
+Student array_3_Students[3]={{"Abu", 2, 88.5},{"Babu", 2, 98.25},{"Cbabu", 2, 68.0}};
+ArrayUtil util_2_3_5 = {(int []){2,3,5}, sizeof(int), 3};
+ArrayUtil util__2_5__3_75__4_25 = {(float []){2.5,3.75,4.25}, sizeof(float), 3};
+ArrayUtil utilDbl__2_3__3_12__4_6 = {(double []){2.3,3.12,4.6}, sizeof(double), 3};
+ArrayUtil util_Chstar__How_are_youu = {(char* []){"How","are","youu"}, sizeof(char*), 3};
+ArrayUtil util_int10__0to9__1to0 = {
+	(int10 []){{0,1,2,3,4,5,6,7,8,9},{1,2,3,4,5,6,7,8,9,0}},
+	sizeof(int10),
+	2
+};
+
+void test_findIndex_001_returns_minus_1_when_the_element_does_not_exist_in_the_util(){
+	int u1[3]={2,3,5}, index, element=4;
+	utils[0]=(ArrayUtil){u1, sizeof(int), 3};
+	index=findIndex(utils[0], &element);
+	assert(index==-1);
+}
+void test_findIndex_002_returns_0_when_the_1st_element_in_the_util_is_given(){
+	int u1[3]={2,3,5}, index, element=2;
+	utils[0]=(ArrayUtil){u1, sizeof(int), 3};
+	index=findIndex(utils[0], &element);
+	assert(index==0);
+}
+void test_findIndex_003_returns_1_when_the_2nd_element_in_the_util_is_given(){
+	int u1[3]={2,3,5}, index, element=3;
+	utils[0]=(ArrayUtil){u1, sizeof(int), 3};
+	index=findIndex(utils[0], &element);
+	assert(index==1);
+}
+void test_findIndex_004_returns_2_when_the_3rd_element_in_the_util_is_given(){
+	int u1[3]={2,3,5}, index, element=5;
+	utils[0]=(ArrayUtil){u1, sizeof(int), 3};
+	index=findIndex(utils[0], &element);
+	assert(index==2);
+}
+void test_findIndex_005_returns_3_when_the_4th_element_in_the_util_is_given_for_String(){
+	String u1[4]={"Hi","How","are","you?"}, element="you?";
+	int index;
+	utils[0]=(ArrayUtil){(void *)u1, sizeof(String), 4};
+	index=findIndex(utils[0], &element);
+	assert(index==3);
+}
+
+
+void test_findIndex_001_returns_minus_1_for_the_element_does_not_exist_char(){
+	char element='e';
+	assert(findIndex(util_a_b_c, &element)==-1);
+}
+void test_findIndex_002_returns_0_for_the_1st_element_char(){
+	char element='a';
+	assert(findIndex(util_a_b_c, &element)==0);
+}
+void test_findIndex_003_returns_2_for_the_3rd_element_char(){
+	char element='c';
+	assert(findIndex(util_a_b_c, &element)==2);
+}
+void test_findIndex_004_returns_minus_1_for_the_element_does_not_exist_int(){
+	int element=11;
+	assert(findIndex(util_2_3_5, &element)==-1);
+}
+void test_findIndex_005_returns_0_for_the_1st_element_int(){
+	int element=2;
+	assert(findIndex(util_2_3_5, &element)==0);
+}
+void test_findIndex_006_returns_2_for_the_3rd_element_int(){
+	int element=5;
+	assert(findIndex(util_2_3_5, &element)==2);
+}
+void test_findIndex_007_returns_minus_1_for_the_element_does_not_exist_float(){
+	float element=2.525;
+	assert(findIndex(util__2_5__3_75__4_25, &element)==-1);
+}
+void test_findIndex_008_returns_0_for_the_1st_element_float(){
+	float element=2.5;
+	assert(findIndex(util__2_5__3_75__4_25, &element)==0);
+}
+void test_findIndex_009_returns_2_for_the_3rd_element_float(){
+	float element=4.25;
+	assert(findIndex(util__2_5__3_75__4_25, &element)==2);
+}
+void test_findIndex_010_returns_minus_1_for_the_element_does_not_exist_double(){
+	double element=2.2;
+	assert(findIndex(utilDbl__2_3__3_12__4_6, &element)==-1);
+}
+void test_findIndex_011_returns_0_for_the_1st_element_double(){
+	double element=2.3;
+	assert(findIndex(utilDbl__2_3__3_12__4_6, &element)==0);
+}
+void test_findIndex_012_returns_2_for_the_3rd_element_double(){
+	double element=4.6;
+	assert(findIndex(utilDbl__2_3__3_12__4_6, &element)==2);
+}
+ArrayUtil util256__How_are_youu = {(char256 []){"How","are","youu"}, sizeof(char256), 3};
+void test_findIndex_013_returns_minus_1_for_the_element_does_not_exist_char256(){
+	char256 element="you";
+	assert(findIndex(util256__How_are_youu, &element)==-1);
+}
+void test_findIndex_014_returns_0_for_the_1st_element_char256(){
+	char256 element="How";
+	assert(findIndex(util256__How_are_youu, &element)==0);
+}
+void test_findIndex_015_returns_2_for_the_3rd_element_char256(){
+	char256 element="youu";
+	assert(findIndex(util256__How_are_youu, &element)==2);
+}
+void test_findIndex_016_returns_minus_1_for_the_element_does_not_exist_char_star(){
+	char* element="you";
+	assert(findIndex(util_Chstar__How_are_youu, &element)==-1);
+}
+void test_findIndex_017_returns_0_for_the_1st_element_char_star(){
+	char* element="How";
+	assert(findIndex(util_Chstar__How_are_youu, &element)==0);
+}
+void test_findIndex_018_returns_2_for_the_3rd_element_char_star(){
+	char* element="youu";
+	assert(findIndex(util_Chstar__How_are_youu, &element)==2);
+}
+void test_findIndex_019_returns_minus_1_for_the_element_does_not_exist_int10(){
+	int10 element={0,1,2,3,4,5,7,6,8,9};
+	assert(findIndex(util_int10__0to9__1to0, &element)==-1);
+}
+void test_findIndex_020_returns_0_for_the_1st_element_int10(){
+	int10 element={0,1,2,3,4,5,6,7,8,9};
+	assert(findIndex(util_int10__0to9__1to0, &element)==0);
+}
+void test_findIndex_021_returns_1_for_the_2nd_element_int10(){
+	int10 element={1,2,3,4,5,6,7,8,9,0};
+	assert(findIndex(util_int10__0to9__1to0, &element)==1);
+}
+ArrayUtil util_float5__pt5s__pt25s = {
+	(float5 []){{.5,.5,.5,.5,.5},{.25,.25,.25,.25,.25}},
+	sizeof(float5),
+	2
+};
+void test_findIndex_022_returns_minus_1_for_the_element_does_not_exist_float5(){
+	float5 element={.5,.5,.25,.5,.5};
+	assert(findIndex(util_float5__pt5s__pt25s, &element)==-1);
+}
+void test_findIndex_021_returns_0_for_the_1st_element_float5(){
+	float5 element={.5,.5,.5,.5,.5};
+	assert(findIndex(util_float5__pt5s__pt25s, &element)==0);
+}
+void test_findIndex_022_returns_1_for_the_2nd_element_float5(){
+	float5 element={.25,.25,.25,.25,.25};
+	assert(findIndex(util_float5__pt5s__pt25s, &element)==1);
+}
+ArrayUtil util_3_Students = {
+	array_3_Students,
+	sizeof(Student),
+	3
+};
+void test_findIndex_023_returns_minus_1_for_the_element_does_not_exist_Student(){
+	Student std={"Abu", 3, 88.5};
+	assert(findIndex(util_3_Students, &std)==-1);
+}
+void test_findIndex_024_returns_0_for_the_1st_element_Student(){
+	Student std={"Abu", 2, 88.5};
+	assert(findIndex(util_3_Students, &std)==0);
+}
+void test_findIndex_025_returns_2_for_the_3rd_element_Student(){
+	Student std={"Cbabu", 2, 68.0};
+	assert(findIndex(util_3_Students, &std)==2);
 }

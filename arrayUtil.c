@@ -3,8 +3,12 @@
 #include "arrayUtil.h"
 
 	
+
+int isDivisible(void *a, void *hint){
+	return (float)(*(int*)a % *(int*)hint) == 0;
+}
 int isEven(void* a, void *b){
-	return ( *(int*)a % *(int*)b == 0);
+	return ( *(int*)a % 2 == 0);
 }
 int isCapital(void *item, void *hint) {
     return (*(char *)item >=65) && (*(char *)item <= 90);
@@ -33,7 +37,12 @@ int isEqual(void *item, void *hint){
 int isGreaterThan(void *a, void *b){
 	return *(float*)a > *(float*)b;
 }
-
+int compare(void *item,void* hint){
+	return (*(char*)item=='a');
+};
+int stringCompare(void *item, void* hint){
+	return(*(string*)item == *(string*)hint);
+}
 
 
 int areEqual(ArrayUtil au1, ArrayUtil au2){
@@ -44,12 +53,12 @@ int areEqual(ArrayUtil au1, ArrayUtil au2){
 	for(i=0; i<au1.length*au1.typeSize; i++)
 		if(a1[i] != a2[i]) return 0;
 	return 1;
+	// result = memcmp(a1, a2, a1.length);
 }
 
 ArrayUtil create(int typeSize, int length){
 	return (ArrayUtil){(void*)calloc(length, typeSize), typeSize, length};
 }
-
 
 ArrayUtil resize(ArrayUtil array, int length){
 	int i, limit;
@@ -80,10 +89,6 @@ void dispose(ArrayUtil util){
 	util.typeSize=0;
 }
 
-int isDivisible(void *a, void *hint){
-	return (float)(*(int*)a % *(int*)hint) == 0;
-}
-
 void *findFirst(ArrayUtil util, int_void_void match, void *hint){
 	int i, j;
 	char *base = (char*)util.base;
@@ -111,22 +116,47 @@ void *findLast(ArrayUtil util, int_void_void match, void *hint){
 	return NULL;
 }
 
-// int count(ArrayUtil util, int_void_void match, void *hint){
-// 	int i, count=0, *base = (int*)util.base;
-// 	for(i=0; i<util.length; i++)
-// 		(match((void*)&base[i], hint)) && count++;
-// 	return count;
-// }
-
 int count(ArrayUtil util, int_void_void match, void *hint){
 	int i, j, count=0;
 	char *base = (char*)util.base;
 	char *item = (char*)malloc(util.typeSize);
-	for(i=util.length-1; i>=0; i--){
-		for(j=util.typeSize-1; j>=0; j--){
+	for(i=0; i<util.length; i++){
+		for(j=0; j<util.typeSize; j++){
 			item[j] = base[i * util.typeSize + j];
 		}
 		(match(item, hint)) && count++;
 	}
 	return count;
 }
+
+int filter(ArrayUtil util, int_void_void predicate, void* hint, void** destination, int maxItems ){
+	int i, j, k=0, count=0;
+	char* dst = malloc(sizeof(char)*(maxItems*util.typeSize));
+	char *base = (char*)util.base;
+	char *item = (char*)malloc(util.typeSize);
+
+	for(i=0; i<util.length; i++){
+		for(j=0; j<util.typeSize; j++)
+			item[j] = base[i * util.typeSize + j];
+		if(predicate(item, hint) && count<maxItems){
+			j=0;
+			while(j<util.typeSize && k<util.typeSize*(count+1)){
+ 				dst[k] = item[j]; j++; k++;
+			} count++;
+		}
+	}
+	*destination = dst;
+	return count;
+}
+
+// int filter(ArrayUtil util, int_void_void predicate, void* hint, void** destination, int maxItems ){
+// 	int i, count=0;
+// 	for(i=0; i<util.length; ++i){
+// 		if(predicate(&(util.base)[i*util.typeSize],hint)){
+// 			((float*)(*destination))[count] = ((float*)util.base)[i];
+// 			if(count == maxItems) return count;
+// 			count++;
+// 		}
+// 	}
+// 	return count;
+// }
