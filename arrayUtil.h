@@ -21,7 +21,9 @@
 #define NO 0
 
 typedef int(*int_void_void)(void*, void*);
+typedef void(*void_2void)(void*, void*);
 typedef void(*void_3void)(void*, void*, void*);
+
 
 typedef char* string;
 typedef char String[256];
@@ -34,31 +36,12 @@ typedef struct Stud {
 	int std; 
 	float percentage; 
 } Student;
-
 typedef struct arrayUtil {
 	void *base;
 	int typeSize;
 	int length;
 } ArrayUtil;
 
-int isDivisible(void*, void*);
-int isGreaterThan(void*, void*);
-int isEven(void*, void*);
-int isUpperCase(void*,void*);
-void addDoubleHint(void*,void*,void*);
-void increment(void*, void*, void*);
-void Inc(void*, void*, void*);
-void toUpperCase(void*, void*, void*);
-void multiplyBy(void*, void*, void*);
-void square_elements(void*, void*, void*);
-int isCapital(void *, void *);
-int isEqual(void*, void*);
-int isLessThanTheHints(void*,void*);
-int isBiggerStringThan(void*, void*);
-int isLessThan(void*, void*);
-int compare(void *item,void* hint);
-int stringCompare(void*, void*);
-void giveLength(void*, void*, void*);
 int areEqual(ArrayUtil, ArrayUtil);
 ArrayUtil create(int, int);
 ArrayUtil resize(ArrayUtil, int);
@@ -69,3 +52,5 @@ void* findLast(ArrayUtil util, int_void_void, void *hint);
 int count(ArrayUtil util, int_void_void, void *hint);
 int filter(ArrayUtil, int_void_void , void*, void**, int);
 void map(ArrayUtil, ArrayUtil, void_3void, void*);
+void forEach(ArrayUtil, void_2void, void*);
+void* reduce(ArrayUtil, void*(*)(void*,void*,void*), void*, void*);

@@ -12,6 +12,80 @@ ArrayUtil arr1;
 ArrayUtil arr2;
 
 
+int isDivisible(void *a, void *hint){
+	return (float)(*(int*)a % *(int*)hint) == 0;
+}
+int isEven(void* a, void *b){
+	return ( *(int*)a % 2 == 0);
+}
+int isCapital(void *item, void *hint) {
+    return (*(char *)item >=65) && (*(char *)item <= 90);
+}
+void addDoubleHint(void* hint, void* src, void *dst) {
+	*(double*)dst = *(double*)hint + *(double *)src;	
+}
+void increment(void* hint, void* src, void* dst){
+	*(int *)dst = 1 + *(int *)src;
+}
+void Inc(void* hint, void* src, void* dst){
+	*(float *)dst = 1 + *(float *)src;
+}
+void square_elements(void *hint, void *sourceItem, void *destinationItem){
+	*(int*)destinationItem=*(int*)sourceItem * *(int*)sourceItem;
+}
+void toUpperCase(void* hint, void* sourceItem, void* destinationItem){
+	*(char*)destinationItem = *(char*)sourceItem - 32;
+}
+void multiplyBy(void* hint, void* sourceItem, void* destinationItem){
+    *(int*)destinationItem = *(int*)sourceItem * *(int*)(hint);
+}
+// void giveLength(void *hint, void *source, void *dest){
+// 	printf("  %d\n", strlen(*(string *)source));
+// 	*(int*)dest = strlen((*(string*)source));
+// }
+int isLessThanTheHints(void* element,void* hint){
+    return (*(float*)element) < (*(float*)hint);
+}
+int isBiggerStringThan(void *str, void *hint){
+	return (strlen((char*)str) > 5);
+}
+int isLessThan(void* element,void* hint){
+    return (*(double*)element < *(double*)hint);
+}
+int isEqual(void *item, void *hint){
+	return (*(double*)item == *(double*)hint);
+}
+int isGreaterThan(void *a, void *b){
+	return *(float*)a > *(float*)b;
+}
+int compare(void *item,void* hint){
+	return (*(char*)item=='a');
+};
+int stringCompare(void *item, void* hint){
+	return(*(string*)item == *(string*)hint);
+}
+void addHint(void* hint, void* item){
+	*(float*)item += *(float*)hint;
+}
+void minusHint(void* hint, void* item){
+	*(double*)item = *(double*)item - *(double*)hint;
+}
+void toLower(void *hint, void *item){
+	*(char*)item = *(char*)item + 32;	
+}
+void* sum (void* hint, void* pv, void* cv){
+	int* result = (int*)malloc(INT_SIZE); 
+	*result = *(int*)pv + *(int*)cv;
+	return result;
+}
+
+void *subtract (void* hint, void* pv, void* cv){
+	float* result = (float*)malloc(float_size); 
+	*result = *(float*)pv - *(float*)cv;
+	return result;
+}
+
+
 void test_areEqual_gives_1_when_two_int_ArrayUtils_are_equal(){
 	arr1 = (ArrayUtil){(int[]){111111111,222222222,3333333333,444444444,555555555}, sizeof(int), 5};
 	arr2 = (ArrayUtil){(int[]){111111111,222222222,3333333333,444444444,555555555}, sizeof(int), 5};
@@ -980,6 +1054,17 @@ void test_map_increments_the_numbers_in_char_array(){
 	dispose(dst);
 }
 
+void test_map_increments_the_numbers_in_char256_array(){
+	ArrayUtil src = {(char[256]){'a','b','c','d'}, char_size, 4};
+	ArrayUtil dst = create(char_size, 4);
+	int hint = 1;
+	void_3void convert = &toUpperCase;
+	map(src, dst, convert, &hint);
+	assertEqual(areEqual((ArrayUtil){(char[256]){'A','B','C','D'},char_size, 4}, dst), 1);
+	dispose(dst);
+}
+
+
 void test_map_converts_each_element_source_int_array_and_put_it_to_destination_array_multipying_by_10(){
     int hint =10;
     arr1=(ArrayUtil){(int[]){1,2,3,4,5},sizeof(int),5};
@@ -1016,4 +1101,93 @@ void test_map_increments_the_numbers_in_double_array(){
 	map(src, dst, convert, &hint);
 	assertEqual(areEqual((ArrayUtil){(double[]){2.2,3.3,4.4,5.5,6.6,7.7},double_size,6}, dst), 1);
 	dispose(dst);
+}
+
+void test_forEach_gives_2_3_4_5_6_for_1_2_3_4_5_in_same_array(){
+	int array[] = {1,2,3,4,5},increamented[] = {2,3,4,5,6};
+	ArrayUtil src = {array,int_size,5},expected = {increamented,int_size,5};
+	int hint = 1;
+	forEach(src,addHint,&hint);
+	assertEqual(areEqual(src,expected),1);
+}
+
+void element_into_element_plus_one(void *hint, void *item){
+	*(int*)item = *(int*)item * (*(int*)item+1);
+}
+void test_forEach_does_multiplication_of_item_with_item_plus_one(){
+	void *hint;
+	int a[]={1,2,3,4,5}, b[]={2,6,12,20,30};
+	ArrayUtil util={a,INT_SIZE,5};
+	ArrayUtil expected={b,INT_SIZE,5};
+	forEach(util,element_into_element_plus_one,&hint);
+	assert(areEqual(util,expected));
+}
+
+void test_forEach_increments_elements_in_float_array(){
+	float array[] = {1.2,2.3,3.4,4.5,5.6}, incremented[] = {2.2,3.3,4.4,5.5,6.6};
+	ArrayUtil src = {array,float_size,5},expected = {incremented,float_size,5};
+	float hint = 1;
+	forEach(src,addHint,&hint);
+	assertEqual(areEqual(src,expected),1);
+}
+
+void test_forEach_increments_elements_in_double_array(){
+	double array[] = {2.1,3.2,4.3,5.4,6.5}, decremented[] = {1.1,2.2,3.3,4.4,5.5};
+	ArrayUtil src = {array,double_size,5}, expected = {decremented,double_size,5};
+	double hint = 1;
+	forEach(src,minusHint,&hint);
+	assertEqual(areEqual(src,expected),1);
+}
+
+void test_forEach_increments_elements_in_char_array(){
+	char array[] = {'A','B','C','D','E'}, decremented[] = {'a','b','c','d','e'};
+	ArrayUtil src = {array,char_size,5}, expected = {decremented,char_size,5};
+	char hint = 32;
+	forEach(src,toLower,&hint);
+	assertEqual(areEqual(src,expected),1);
+}
+
+void test_forEach_increments_elements_in_char256_array(){
+	char array[256] = {'A','B','C','D','E'}, decremented[256] = {'a','b','c','d','e'};
+	ArrayUtil src = {array,char_size,5}, expected = {decremented,char_size,5};
+	char hint = 32;
+	forEach(src,toLower,&hint);
+	assertEqual(areEqual(src,expected),1);
+}
+
+// void *add_all(void* hint, void* previousItem, void* item){
+// 	*((int*)item)= *((int*)previousItem) + *((int*)item);
+// 	return ((int*)item);
+// }
+
+
+void test_reduce_gives_15_when_elements_are_1_2_3_4_5_and_initial_value_is_0(){
+	int hint = 2, result, initial_value = 0;
+	void* (*reducer)(void*,void*,void*) = sum;
+	arr1 = (ArrayUtil){(int[]){1,2,3,4,5}, int_size, 5};
+	result = *(int*)reduce(arr1, reducer, &hint, &initial_value);
+	assertEqual(result,15);
+}
+
+void test_reduce_gives_30_when_elements_are_1_2_3_4_5_and_initial_value_is_15(){
+	void *hint; int intialValue = 15;
+	int array[] = {1,2,3,4,5};
+	arr1 = (ArrayUtil){(int[]){1,2,3,4,5},INT_SIZE,5};
+	assertEqual(*(int*)reduce(arr1, sum, hint, &intialValue),30);
+}
+
+void test_reduce_gives_subtracts_float_elements_with_initialValue_2(){
+	float hint = 2, result, initial_value = 102.6;
+	void* (*reducer)(void*,void*,void*) = &subtract;
+	arr1 = (ArrayUtil){(float[]){45.5, 11.4, 12.3, 3.8, 14.2, 5.0}, float_size, 6};
+	result = *(float*)reduce(arr1, reducer, &hint, &initial_value);
+	assertEqual(result,(float)10.4);
+}
+
+void test_reduce_returns_initialValue_when_array_is_empty(){
+	float hint = 2, result, initial_value = 10.2;
+	void* (*reducer)(void*,void*,void*) = &subtract;
+	arr1 = (ArrayUtil){(float[]){}, float_size, 0};
+	result = *(float*)reduce(arr1, reducer, &hint, &initial_value);
+	assertEqual(result,(float)10.2);
 }
