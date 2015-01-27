@@ -12,15 +12,28 @@ int isEven(void* a, void *b){
 int isCapital(void *item, void *hint) {
     return (*(char *)item >=65) && (*(char *)item <= 90);
 }
-void intAddOperation(void* hint, void* item) {
-	*(int*)item = *(int*)hint + *(int *)item;	
+void addDoubleHint(void* hint, void* src, void *dst) {
+	*(double*)dst = *(double*)hint + *(double *)src;	
 }
-void intConvertFunc(void* hint, void* sourceItem, void* destinationItem){
-	*(int *)destinationItem = *(int *)hint + *(int *)sourceItem;
+void increment(void* hint, void* src, void* dst){
+	*(int *)dst = 1 + *(int *)src;
 }
-void charConvertFunc(void* hint, void* sourceItem, void* destinationItem){
+void Inc(void* hint, void* src, void* dst){
+	*(float *)dst = 1 + *(float *)src;
+}
+void square_elements(void *hint, void *sourceItem, void *destinationItem){
+	*(int*)destinationItem=*(int*)sourceItem * *(int*)sourceItem;
+}
+void toUpperCase(void* hint, void* sourceItem, void* destinationItem){
 	*(char*)destinationItem = *(char*)sourceItem - 32;
 }
+void multiplyBy(void* hint, void* sourceItem, void* destinationItem){
+    *(int*)destinationItem = *(int*)sourceItem * *(int*)(hint);
+}
+// void giveLength(void *hint, void *source, void *dest){
+// 	printf("  %d\n", strlen(*(string *)source));
+// 	*(int*)dest = strlen((*(string*)source));
+// }
 int isLessThanTheHints(void* element,void* hint){
     return (*(float*)element) < (*(float*)hint);
 }
@@ -44,11 +57,13 @@ int stringCompare(void *item, void* hint){
 }
 
 
+
 int areEqual(ArrayUtil au1, ArrayUtil au2){
 	if (au1.length != au2.length || au1.typeSize != au2.typeSize)
 		return 0;
 	return (memcmp(au1.base, au2.base, au1.length*au1.typeSize)==0) ? 1 : 0;
 }
+
 
 ArrayUtil create(int typeSize, int length){
 	return (ArrayUtil){(void*)calloc(length, typeSize), typeSize, length};
@@ -142,14 +157,44 @@ int filter(ArrayUtil util, int_void_void predicate, void* hint, void** destinati
 	return count;
 }
 
+void map(ArrayUtil source, ArrayUtil destination, void_3void convert, void* hint){
+	int i;
+	for(i=0; i < source.length*source.typeSize; i+=source.typeSize){
+		convert(hint, &((char*)source.base)[i], &((char*)destination.base)[i]);
+	}
+}
+
+
+
 // int filter(ArrayUtil util, int_void_void predicate, void* hint, void** destination, int maxItems ){
 // 	int i, count=0;
-// 	for(i=0; i<util.length; ++i){
+// 	for(i=0; i < util.length*util.typeSize; i++){
 // 		if(predicate(&(util.base)[i*util.typeSize],hint)){
-// 			((float*)(*destination))[count] = ((float*)util.base)[i];
 // 			if(count == maxItems) return count;
+// 			((float*)(*destination))[count] = ((float*)util.base)[i];
 // 			count++;
 // 		}
 // 	}
 // 	return count;
 // }
+
+	// // char *bs = (char*)malloc(sizeof(char) * source.typeSize);
+	// // char *ds = (char*)malloc(sizeof(char) * source.typeSize);
+	
+	// // for(i=0; i<source.length; i++){
+	// // 	for(j=0; j<source.typeSize; j++){
+	// // 		bs[j] = ((char*)source.base)[i * source.typeSize + j];
+	// // 		ds[j] = ((char*)destination.base)[i * source.typeSize + j];
+	// // 	}
+	// // 	convert(hint, bs, ds);
+	// // 	for(j=0; j<source.typeSize; i++){
+	// // 		if(k < source.length * source.typeSize){
+	// // 			((char*)destination.base)[k] = ((char*)ds)[j];
+	// // 			k++;
+	// // 		}
+	// // 	}
+	// // }
+	// 	printf("%d\n", ((int*)destination.base)[0] );
+	// 	printf("%d\n", ((int*)destination.base)[1] );
+	// 	printf("%d\n", ((int*)destination.base)[2] );
+	// 	printf("%d\n", ((int*)destination.base)[3] );

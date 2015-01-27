@@ -19,7 +19,10 @@
 #define sizeOf_float_star sizeof(float_star)
 #define YES 1
 #define NO 0
+
 typedef int(*int_void_void)(void*, void*);
+typedef void(*void_3void)(void*, void*, void*);
+
 typedef char* string;
 typedef char String[256];
 typedef void *void_star;
@@ -42,17 +45,21 @@ int isDivisible(void*, void*);
 int isGreaterThan(void*, void*);
 int isEven(void*, void*);
 int isUpperCase(void*,void*);
-void intAddOperation(void*,void*);
-void intConvertFunc(void*, void*, void*);
-void charConvertFunc(void*, void*, void*);
+void addDoubleHint(void*,void*,void*);
+void increment(void*, void*, void*);
+void Inc(void*, void*, void*);
+void toUpperCase(void*, void*, void*);
+void multiplyBy(void*, void*, void*);
+void square_elements(void*, void*, void*);
 int isCapital(void *, void *);
 int isEqual(void*, void*);
 int isLessThanTheHints(void*,void*);
 int isBiggerStringThan(void*, void*);
 int isLessThan(void*, void*);
 int compare(void *item,void* hint);
-int areEqual(ArrayUtil, ArrayUtil);
 int stringCompare(void*, void*);
+void giveLength(void*, void*, void*);
+int areEqual(ArrayUtil, ArrayUtil);
 ArrayUtil create(int, int);
 ArrayUtil resize(ArrayUtil, int);
 int findIndex(ArrayUtil util, void* element);
@@ -61,3 +68,4 @@ void* findFirst(ArrayUtil util, int_void_void, void *hint);
 void* findLast(ArrayUtil util, int_void_void, void *hint);
 int count(ArrayUtil util, int_void_void, void *hint);
 int filter(ArrayUtil, int_void_void , void*, void**, int);
+void map(ArrayUtil, ArrayUtil, void_3void, void*);

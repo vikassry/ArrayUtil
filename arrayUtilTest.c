@@ -1,8 +1,8 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
 #include "arrayUtil.h"
 #include "expr_assert.h"
+
 typedef struct Student{
     int rollno;
     float age;
@@ -958,4 +958,62 @@ void test_findIndex_024_returns_0_for_the_1st_element_Student(){
 void test_findIndex_025_returns_2_for_the_3rd_element_Student(){
 	Student std={"Cbabu", 2, 68.0};
 	assert(findIndex(util_3_Students, &std)==2);
+}
+
+
+void test_map_increments_the_numbers_in_int_array(){
+	ArrayUtil src = {(int[]){1,2,3,4,5,6}, int_size, 6};
+	ArrayUtil dst = create(int_size, 6);  int hint = 1;
+	void_3void convert = &increment;
+	map(src, dst, convert, &hint);
+	assertEqual(areEqual((ArrayUtil){(int[]){2,3,4,5,6,7},int_size,6}, dst), 1);
+	dispose(dst);
+}
+
+void test_map_increments_the_numbers_in_char_array(){
+	ArrayUtil src = {(char[]){'a','b','c','d','e'}, char_size, 5};
+	ArrayUtil dst = create(char_size, 5);
+	int hint = 1;
+	void_3void convert = &toUpperCase;
+	map(src, dst, convert, &hint);
+	assertEqual(areEqual((ArrayUtil){(char[]){'A','B','C','D','E'},char_size,5}, dst), 1);
+	dispose(dst);
+}
+
+void test_map_converts_each_element_source_int_array_and_put_it_to_destination_array_multipying_by_10(){
+    int hint =10;
+    arr1=(ArrayUtil){(int[]){1,2,3,4,5},sizeof(int),5};
+    arr2 =create(sizeof(int),5);
+    map(arr1,arr2,multiplyBy,&hint);
+    
+    assert(areEqual((ArrayUtil){(int[]){10,20,30,40,50},sizeof(int),5}, arr2));
+    dispose(arr2);
+}
+
+void test_map_returns_square_of_each_element_in_array(){
+	int hint =0; void_3void convert= &square_elements;
+	ArrayUtil expected = (ArrayUtil){(int[]){1,4,9,16,25},INT_SIZE,5};
+	arr1 = (ArrayUtil){(int[]){1,2,3,4,5},INT_SIZE,5};
+	arr2 = (ArrayUtil){calloc(5,INT_SIZE),INT_SIZE,5};
+	map(arr1, arr2, convert, &hint);
+	
+	assert(areEqual(expected, arr2));
+    dispose(arr2);
+}
+
+void test_map_increments_the_numbers_in_float_array(){
+	ArrayUtil src = {(float[]){1.2, 2.3, 3.4, 4.5, 5.6, 6.7}, float_size, 6};
+	ArrayUtil dst = create(float_size, 6);  float hint = 1;
+	void_3void convert = &Inc;
+	map(src, dst, convert, &hint);
+	assertEqual(areEqual((ArrayUtil){(float[]){2.2,3.3,4.4,5.5,6.6,7.7},float_size,6}, dst), 1);
+	dispose(dst);
+}
+void test_map_increments_the_numbers_in_double_array(){
+	ArrayUtil src = {(double[]){1.2, 2.3, 3.4, 4.5, 5.6, 6.7}, double_size, 6};
+	ArrayUtil dst = create(double_size, 6);  double hint = 1;
+	void_3void convert = &addDoubleHint;
+	map(src, dst, convert, &hint);
+	assertEqual(areEqual((ArrayUtil){(double[]){2.2,3.3,4.4,5.5,6.6,7.7},double_size,6}, dst), 1);
+	dispose(dst);
 }
