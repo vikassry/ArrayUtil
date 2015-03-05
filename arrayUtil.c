@@ -122,7 +122,6 @@ void* reduce(ArrayUtil util, void*(*reducer)(void*,void*,void*), void *hint, voi
 
 
 
-
 // int filter(ArrayUtil util, int_void_void predicate, void* hint, void** destination, int maxItems ){
 // 	int i, count=0;
 // 	for(i=0; i < util.length*util.typeSize; i+=util.typeSize){
